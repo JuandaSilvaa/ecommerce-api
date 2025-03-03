@@ -17,7 +17,7 @@ Este projeto teve início no minicurso de Python da Rocketseat. Inicialmente, er
 ### 🔹 1. Clonar o Repositório
 
 ```sh
-  git clone https://github.com//ecommerce-api.git
+  git clone https://github.com/JuandaSilvaa/ecommerce-api.git
   cd ecommerce-api
 ```
 
