@@ -1,0 +1,16 @@
+# Ignore a pasta instance (usada para configs locais, banco de dados, etc.)
+instance/
+
+# Arquivos Python compilados
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ambientes virtuais
+venv/
+.env/
+
+# Logs e arquivos temporários
+*.log
+*.sqlite3

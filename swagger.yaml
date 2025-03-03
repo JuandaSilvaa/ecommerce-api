@@ -1,0 +1,539 @@
+definitions: {}
+host: localhost:5000
+info:
+  contact:
+    name: Juan da Silva
+    url: https://www.linkedin.com/in/juan-da-silva-almeida-62aa491b5
+  description: API to manage products and carts in e-commerce.
+  title: E-commerce API
+  version: 1.0.0
+paths:
+  /:
+    get:
+      responses:
+        '200':
+          description: API is working correctly
+      summary: Check if the API is running
+  /api/cart:
+    get:
+      responses:
+        '200':
+          description: A list of items in the user's cart
+          schema:
+            items:
+              properties:
+                id:
+                  description: Cart item ID
+                  example: 1
+                  type: integer
+                product_id:
+                  description: Product ID in the cart
+                  example: 5
+                  type: integer
+                product_name:
+                  description: Name of the product
+                  example: Wireless Headphones
+                  type: string
+                product_price:
+                  description: Price of the product
+                  example: 99.99
+                  format: float
+                  type: number
+                user_id:
+                  description: User ID who owns the cart item
+                  example: 2
+                  type: integer
+              type: object
+            type: array
+        '401':
+          description: Unauthorized. User must be logged in
+          schema:
+            properties:
+              message:
+                example: Unauthorized. No active session
+                type: string
+            type: object
+      security:
+        - ApiKeyAuth: []
+      summary: Retrieve the user's shopping cart
+      tags:
+        - Cart
+  /api/cart/add/{product_id}:
+    post:
+      parameters:
+        - description: The ID of the product to be added to the cart
+          in: path
+          name: product_id
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: Item added to the cart successfully
+          schema:
+            properties:
+              message:
+                example: Item added to the cart successfully
+                type: string
+            type: object
+        '400':
+          description: Failed to add item to the cart
+          schema:
+            properties:
+              message:
+                example: Failed to add item to the cart
+                type: string
+            type: object
+      security:
+        - ApiKeyAuth: []
+      summary: Add a product to the user's cart
+      tags:
+        - Cart
+  /api/cart/checkout:
+    post:
+      responses:
+        '200':
+          description: Checkout completed successfully. Cart has been cleared.
+          schema:
+            properties:
+              message:
+                example: Checkout successful. Cart has been cleared.
+                type: string
+            type: object
+        '401':
+          description: Unauthorized. User must be logged in.
+          schema:
+            properties:
+              message:
+                example: Unauthorized. No active session
+                type: string
+            type: object
+      security:
+        - ApiKeyAuth: []
+      summary: Checkout and clear the user's shopping cart
+      tags:
+        - Cart
+  /api/cart/remove/{product_id}:
+    delete:
+      parameters:
+        - description: The ID of the product to be removed from the cart
+          in: path
+          name: product_id
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: Item removed from the cart successfully
+          schema:
+            properties:
+              message:
+                example: Item removed from the cart successfully
+                type: string
+            type: object
+        '400':
+          description: Failed to remove item from the cart
+          schema:
+            properties:
+              message:
+                example: Failed to remove item from the cart
+                type: string
+            type: object
+      security:
+        - ApiKeyAuth: []
+      summary: Remove a product from the user's cart
+      tags:
+        - Cart
+  /api/products:
+    get:
+      responses:
+        '200':
+          description: A list of all available products
+          schema:
+            items:
+              properties:
+                description:
+                  example: Noise-canceling wireless headphones with 20 hours of battery life
+                  type: string
+                id:
+                  example: 1
+                  type: integer
+                name:
+                  example: Wireless Headphones
+                  type: string
+                price:
+                  example: 149.99
+                  format: float
+                  type: number
+              type: object
+            type: array
+      summary: Retrieve all products
+      tags:
+        - Products
+  /api/products/add:
+    post:
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            properties:
+              description:
+                description: Optional product description
+                type: string
+              name:
+                description: Product name
+                type: string
+              price:
+                description: Product price
+                format: float
+                type: number
+            required:
+              - name
+              - price
+            type: object
+      responses:
+        '200':
+          description: Product added successfully
+          schema:
+            properties:
+              message:
+                example: Product added successfully
+                type: string
+            type: object
+        '400':
+          description: Invalid product data
+          schema:
+            properties:
+              message:
+                example: Invalid product data
+                type: string
+            type: object
+        '401':
+          description: Unauthorized - Authentication required
+          schema:
+            properties:
+              message:
+                example: Unauthorized. Please log in.
+                type: string
+            type: object
+      security:
+        - ApiKeyAuth: []
+      summary: Add a new product
+      tags:
+        - Products
+  /api/products/delete/{product_id}:
+    delete:
+      parameters:
+        - description: The ID of the product to be deleted
+          in: path
+          name: product_id
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: Product deleted successfully
+          schema:
+            properties:
+              message:
+                example: Product deleted successfully
+                type: string
+            type: object
+        '401':
+          description: Unauthorized - Authentication required
+          schema:
+            properties:
+              message:
+                example: Unauthorized. Please log in.
+                type: string
+            type: object
+        '404':
+          description: Product not found
+          schema:
+            properties:
+              message:
+                example: Product not found
+                type: string
+            type: object
+      security:
+        - ApiKeyAuth: []
+      summary: Delete a product by ID
+      tags:
+        - Products
+  /api/products/update/{product_id}:
+    put:
+      parameters:
+        - description: The ID of the product to update
+          in: path
+          name: product_id
+          required: true
+          type: integer
+        - in: body
+          name: body
+          required: true
+          schema:
+            properties:
+              description:
+                example: Updated version with better battery life
+                type: string
+              name:
+                example: Smartphone Pro
+                type: string
+              price:
+                example: 599.99
+                format: float
+                type: number
+            type: object
+      responses:
+        '200':
+          description: Product updated successfully
+          schema:
+            properties:
+              message:
+                example: Product updated successfully
+                type: string
+            type: object
+        '404':
+          description: Product not found
+          schema:
+            properties:
+              message:
+                example: Product not found
+                type: string
+            type: object
+      summary: Update an existing product by ID
+      tags:
+        - Products
+  /api/products/{product_id}:
+    get:
+      parameters:
+        - description: The ID of the product to retrieve
+          in: path
+          name: product_id
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: Product details retrieved successfully
+          schema:
+            properties:
+              description:
+                example: Latest model with advanced features
+                type: string
+              id:
+                example: 1
+                type: integer
+              name:
+                example: Smartphone
+                type: string
+              price:
+                example: 499.99
+                format: float
+                type: number
+            type: object
+        '404':
+          description: Product not found
+          schema:
+            properties:
+              message:
+                example: Product not found
+                type: string
+            type: object
+      summary: Retrieve product details by ID
+      tags:
+        - Products
+  /api/user/add:
+    post:
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            properties:
+              password:
+                description: The password for the new user
+                type: string
+              username:
+                description: The username for the new user
+                type: string
+            required:
+              - username
+              - password
+            type: object
+      responses:
+        '200':
+          description: User added successfully
+          schema:
+            properties:
+              message:
+                example: User added successfully
+                type: string
+            type: object
+        '400':
+          description: Invalid user data
+          schema:
+            properties:
+              message:
+                example: Invalid user data
+                type: string
+            type: object
+      summary: Add a new user
+      tags:
+        - Users
+  /api/user/delete/{user_id}:
+    delete:
+      parameters:
+        - description: The ID of the user to be deleted
+          in: path
+          name: user_id
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: User deleted successfully
+          schema:
+            properties:
+              message:
+                example: User deleted successfully
+                type: string
+            type: object
+        '401':
+          description: Unauthorized. User must be logged in
+          schema:
+            properties:
+              message:
+                example: Unauthorized. User must be logged in
+                type: string
+            type: object
+        '404':
+          description: User not found
+          schema:
+            properties:
+              message:
+                example: User not found
+                type: string
+            type: object
+      security:
+        - ApiKeyAuth: []
+      summary: Delete a user by ID
+      tags:
+        - Users
+  /api/user/update/{user_id}:
+    put:
+      parameters:
+        - description: The ID of the user to be updated
+          in: path
+          name: user_id
+          required: true
+          type: integer
+        - in: body
+          name: body
+          required: true
+          schema:
+            properties:
+              password:
+                description: New password
+                type: string
+              username:
+                description: New username
+                type: string
+            type: object
+      responses:
+        '200':
+          description: User updated successfully
+          schema:
+            properties:
+              message:
+                example: User updated successfully
+                type: string
+            type: object
+        '403':
+          description: Insufficient permission
+          schema:
+            properties:
+              message:
+                example: Insufficient permission
+                type: string
+            type: object
+        '404':
+          description: User not found
+          schema:
+            properties:
+              message:
+                example: User not found
+                type: string
+            type: object
+      security:
+        - ApiKeyAuth: []
+      summary: Update user information
+      tags:
+        - Users
+  /login:
+    post:
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            properties:
+              password:
+                description: User's password
+                format: password
+                type: string
+              username:
+                description: User's unique username
+                type: string
+            required:
+              - username
+              - password
+            type: object
+      responses:
+        '200':
+          description: User logged in successfully
+          schema:
+            properties:
+              message:
+                example: Logged in successfully
+                type: string
+            type: object
+        '401':
+          description: Unauthorized. Invalid credentials
+          schema:
+            properties:
+              message:
+                example: Unauthorized. Invalid credentials
+                type: string
+            type: object
+      summary: User login
+      tags:
+        - Authentication
+  /logout:
+    post:
+      responses:
+        '200':
+          description: User logged out successfully
+          schema:
+            properties:
+              message:
+                example: Logout successfully
+                type: string
+            type: object
+        '401':
+          description: Unauthorized. No active session
+          schema:
+            properties:
+              message:
+                example: Unauthorized. No active session
+                type: string
+            type: object
+      security:
+        - ApiKeyAuth: []
+      summary: User logout
+      tags:
+        - Authentication
+schemes:
+  - http
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: '2.0'
